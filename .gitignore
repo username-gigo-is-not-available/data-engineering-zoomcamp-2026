@@ -1,0 +1,30 @@
+# Terraform
+
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+*.tfplan
+.terraform.lock.hcl
+
+# Python and Pycharm
+
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.idea/
+*.iml
+
+# Data and Logs
+
+data/*
+!data/.gitkeep
+*.csv
+*.parquet
+*.json
+*.gz
+*.log
+keys/
