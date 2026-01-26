@@ -20,17 +20,18 @@ The goal of this course is to learn the technologies used to build scalable data
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### 🔧 Prerequisites
+### Prerequisites
 
 - Docker & Docker Compose
 - Terraform
 - Google Cloud SDK
 - Python 3.13+
 
-### 📂 Setup
+### Setup
 
 1. Clone this repository:
    ```bash
    git clone [https://github.com/username-gigo-is-not-available/data-engineering-zoomcamp-2026.git](https://github.com/username-gigo-is-not-available/data-engineering-zoomcamp-2026.git)
+   ```
