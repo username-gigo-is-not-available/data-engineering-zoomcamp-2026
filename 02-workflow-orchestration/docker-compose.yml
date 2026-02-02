@@ -1,0 +1,55 @@
+services:
+  kestra:
+    container_name: kestra
+    image: kestra/kestra:latest
+    command: server local --config /app/confs/kestra-config.yml
+    user: root
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      KESTRA_DB_USER: ${KESTRA_DB_USER}
+      KESTRA_DB_PASSWORD: ${KESTRA_DB_PASSWORD}
+      KESTRA_DB_NAME: ${KESTRA_DB_NAME}
+      NYC_TAXI_USER: ${NYC_TAXI_DB_USER}
+      NYC_TAXI_PASSWORD: ${NYC_TAXI_DB_PASSWORD}
+      NYC_TAXI_DB: ${NYC_TAXI_DB_NAME}
+    volumes:
+      - ./data:/app/data
+      - ./kestra-config.yml:/app/confs/kestra-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - postgres
+
+
+  postgres:
+    container_name: postgres
+    image: postgres:17-alpine
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${NYC_TAXI_DB_USER}
+      POSTGRES_PASSWORD: ${NYC_TAXI_DB_PASSWORD}
+      POSTGRES_DB: ${NYC_TAXI_DB_NAME}
+    ports:
+      - "${NYC_TAXI_DB_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    env_file: .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  pgdata:
+  pgadmin_data:
+

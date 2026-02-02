@@ -1,0 +1,30 @@
+id: data_engineering_zoomcamp_2026_nyc_taxi_backfill_pipeline
+namespace: company.nyc.taxi
+
+inputs:
+  - id: dataset_type
+    type: SELECT
+    values: [ "green", "yellow" ]
+    defaults: "green"
+  - id: year
+    type: SELECT
+    values: [ "2019", "2020", "2021" ]
+    defaults: "2019"
+  - id: chunk_size
+    type: INT
+    defaults: 100000
+
+tasks:
+  - id: iterate_months
+    type: io.kestra.plugin.core.flow.ForEach
+    values: [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ]
+    tasks:
+      - id: run_monthly_pipeline
+        type: io.kestra.plugin.core.flow.Subflow
+        flowId: data_engineering_zoomcamp_2026_nyc_taxi_monthly_pipeline
+        namespace: company.nyc.taxi
+        inputs:
+          dataset_type: "{{ inputs.dataset_type }}"
+          year: "{{ inputs.year }}"
+          month: "{{ taskrun.value }}"
+        wait: false

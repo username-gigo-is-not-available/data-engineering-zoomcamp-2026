@@ -1,0 +1,26 @@
+kestra:
+  variables:
+    env-vars-prefix: ""
+  server:
+    basic_auth:
+      username: ${KESTRA_AUTH_USER}
+      password: ${KESTRA_AUTH_PASSWORD}
+  repository:
+    type: postgres
+    url: jdbc:postgresql://postgres:5432/${KESTRA_DB_NAME}
+    username: ${KESTRA_DB_USER}
+    password: ${KESTRA_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  
+  storage:
+    type: local
+    local:
+      base-path: "/app/storage"
+  
+  queue:
+    type: postgres
+  
+  tasks:
+    tmp-dir:
+      path: "/tmp/kestra-wd/tmp"
+
