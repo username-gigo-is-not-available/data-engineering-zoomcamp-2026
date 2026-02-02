@@ -9,14 +9,14 @@ The goal of this course is to learn the technologies used to build scalable data
 
 ## Repository Structure
 
-| Module | Topic                                         | Solutions                                     |
-|:-------|:----------------------------------------------|:----------------------------------------------|
-| **01** | **Containerization & Infrastructure as Code** | [01-docker-terraform](./01-docker-terraform/) |
-| **02** | **Workflow Orchestration**                    |                                               |
-| **03** | **Data Warehouse**                            |                                               |
-| **04** | **Analytics Engineering**                     |                                               |
-| **05** | **Batch Processing**                          |                                               |
-| **06** | **Streaming**                                 |                                               |
+| Module | Topic                                         | Solutions                                                 |
+|:-------|:----------------------------------------------|:----------------------------------------------------------|
+| **01** | **Containerization & Infrastructure as Code** | [01-docker-terraform](./01-docker-terraform/)             |
+| **02** | **Workflow Orchestration**                    | [02-workflow-orchestration](./02-workflow-orchestration/) |
+| **03** | **Data Warehouse**                            |                                                           |
+| **04** | **Analytics Engineering**                     |                                                           |
+| **05** | **Batch Processing**                          |                                                           |
+| **06** | **Streaming**                                 |                                                           |
 
 ---
 
@@ -31,7 +31,4 @@ The goal of this course is to learn the technologies used to build scalable data
 
 ### Setup
 
-1. Clone this repository:
-   ```bash
-   git clone [https://github.com/username-gigo-is-not-available/data-engineering-zoomcamp-2026.git](https://github.com/username-gigo-is-not-available/data-engineering-zoomcamp-2026.git)
-   ```
+[Clone the Repository](https://github.com/username-gigo-is-not-available/data-engineering-zoomcamp-2026.git)
