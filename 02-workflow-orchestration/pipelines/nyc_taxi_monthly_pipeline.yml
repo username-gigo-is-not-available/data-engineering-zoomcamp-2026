@@ -39,6 +39,7 @@ tasks:
       - python -m silver.main --dataset_type {{ inputs.dataset_type }} --year {{ inputs.year }} --month {{ inputs.month }} --chunk_size {{ inputs.chunk_size }}
     outputFiles:
       - "{{ envs.nyc_taxi_directory_path }}/*.parquet"
+
   - id: gold
     type: io.kestra.plugin.scripts.shell.Commands
     taskRunner:
