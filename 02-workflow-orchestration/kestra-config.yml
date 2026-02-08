@@ -7,7 +7,7 @@ kestra:
       password: ${KESTRA_AUTH_PASSWORD}
   repository:
     type: postgres
-    url: jdbc:postgresql://postgres:5432/${KESTRA_DB_NAME}
+    url: jdbc:postgresql://${KESTRA_DB_HOST}:${KESTRA_DB_PORT}/${KESTRA_DB_NAME}
     username: ${KESTRA_DB_USER}
     password: ${KESTRA_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver

@@ -9,12 +9,11 @@ services:
     env_file:
       - .env
     environment:
+      KESTRA_DB_HOST: ${KESTRA_DB_HOST}
+      KESTRA_DB_PORT: ${KESTRA_DB_PORT}
       KESTRA_DB_USER: ${KESTRA_DB_USER}
       KESTRA_DB_PASSWORD: ${KESTRA_DB_PASSWORD}
       KESTRA_DB_NAME: ${KESTRA_DB_NAME}
-      NYC_TAXI_USER: ${NYC_TAXI_DB_USER}
-      NYC_TAXI_PASSWORD: ${NYC_TAXI_DB_PASSWORD}
-      NYC_TAXI_DB: ${NYC_TAXI_DB_NAME}
     volumes:
       - ./data:/app/data
       - ./kestra-config.yml:/app/confs/kestra-config.yml
@@ -24,7 +23,7 @@ services:
 
 
   postgres:
-    container_name: postgres
+    container_name: ${NYC_TAXI_DB_HOST}
     image: postgres:17-alpine
     env_file: .env
     environment:
