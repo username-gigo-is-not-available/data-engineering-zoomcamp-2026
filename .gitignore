@@ -27,4 +27,4 @@ data/*
 *.json
 *.gz
 *.log
-keys/
+**/secrets/
