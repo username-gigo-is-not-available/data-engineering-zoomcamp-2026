@@ -1,4 +1,3 @@
-variable "credentials_path" { default = "./keys/my-creds.json" }
 variable "project"          { }
 variable "region"           { default = "europe-west3" }
 variable "location"         { default = "EU" }

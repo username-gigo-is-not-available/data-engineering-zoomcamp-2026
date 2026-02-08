@@ -227,67 +227,239 @@ Answers:
 ```bash
 terraform init
 
+Initializing the backend...
+Initializing provider plugins...
+- Reusing previous version of hashicorp/google from the dependency lock file
+- Using previously-installed hashicorp/google v7.16.0
 
-#Initializing the backend...
-#
-#Initializing provider plugins...
-#- Finding hashicorp/google versions matching "7.16.0"...
-#- Installing hashicorp/google v7.16.0...
-#- Installed hashicorp/google (signed by HashiCorp)
-#
-#Terraform has been successfully initialized!
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see                                                                                                                                        
+any changes that are required for your infrastructure. All Terraform commands                                                                                                                                        
+should now work.                                                                                                                                                                                                     
+                                                                                                                                                                                                                     
+If you ever set or change modules or backend configuration for Terraform,                                                                                                                                            
+rerun this command to reinitialize your working directory. If you forget, other                                                                                                                                      
+commands will detect it and remind you to do so if necessary.                                                                                                                                                        
+
 ```
 
 ```bash 
 
 terraform apply -auto-approve
 
-#Terraform used the selected providers to generate the following execution plan:
-#
-#  + resource "google_bigquery_dataset" "nyc_taxi_trips_dataset" {
-#      + dataset_id                  = "dtc-de-zoomcamp-2026-nyc-taxi-trips-dataset"
-#      + id                          = (known after apply)
-#      + location                    = "EU"
-#      + project                     = "dtc-de-zoomcamp-2026-nyc-taxi-trips"
-#      ...
-#    }
-#
-#  + resource "google_storage_bucket" "nyc_taxi_trips_bucket" {
-#      + force_destroy               = true
-#      + location                    = "EU"
-#      + name                        = "dtc-de-zoomcamp-2026-nyc-taxi-trips-bucket"
-#      + project                     = (known after apply)
-#      + storage_class               = "STANDARD"
-#      
-#      + lifecycle_rule {
-#          + action {
-#              + type = "AbortIncompleteMultipartUpload"
-#            }
-#          + condition {
-#              + age = 1
-#            }
-#        }
-#    }
-#
-#Plan: 2 to add, 0 to change, 0 to destroy.
-#
-#google_bigquery_dataset.nyc_taxi_trips_dataset: Creating...
-#google_storage_bucket.nyc_taxi_trips_bucket: Creating...
-#google_storage_bucket.nyc_taxi_trips_bucket: Creation complete after 2s [id=dtc-de-zoomcamp-2026-nyc-taxi-trips-bucket]
-#google_bigquery_dataset.nyc_taxi_trips_dataset: Creation complete after 3s [id=projects/dtc-de-zoomcamp-2026-nyc-taxi-trips/datasets/dtc-de-zoomcamp-2026-nyc-taxi-trips-dataset]
-#
-#Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_bigquery_dataset.nyc_taxi_trips_dataset will be created
+  + resource "google_bigquery_dataset" "nyc_taxi_trips_dataset" {
+      + creation_time              = (known after apply)
+      + dataset_id                 = "data_engineering_zoomcamp_2026_nyc_taxi_dataset"
+      + default_collation          = (known after apply)
+      + delete_contents_on_destroy = false
+      + effective_labels           = {
+          + "goog-terraform-provisioned" = "true"
+        }
+      + etag                       = (known after apply)
+      + id                         = (known after apply)
+      + is_case_insensitive        = (known after apply)
+      + last_modified_time         = (known after apply)
+      + location                   = "EU"
+      + max_time_travel_hours      = (known after apply)
+      + project                    = "avid-task-486715-p7"
+      + self_link                  = (known after apply)
+      + storage_billing_model      = (known after apply)
+      + terraform_labels           = {
+          + "goog-terraform-provisioned" = "true"
+        }
+
+      + access (known after apply)
+    }
+
+  # google_storage_bucket.nyc_taxi_trips_bucket will be created
+  + resource "google_storage_bucket" "nyc_taxi_trips_bucket" {
+      + effective_labels            = {
+          + "goog-terraform-provisioned" = "true"
+        }
+      + force_destroy               = true
+      + id                          = (known after apply)
+      + location                    = "EU"
+      + name                        = "data_engineering_zoomcamp_2026_nyc_taxi_bucket"
+      + project                     = (known after apply)
+      + project_number              = (known after apply)
+      + public_access_prevention    = (known after apply)
+      + rpo                         = (known after apply)
+      + self_link                   = (known after apply)
+      + storage_class               = "STANDARD"
+      + terraform_labels            = {
+          + "goog-terraform-provisioned" = "true"
+        }
+      + time_created                = (known after apply)
+      + uniform_bucket_level_access = (known after apply)
+      + updated                     = (known after apply)
+      + url                         = (known after apply)
+
+      + lifecycle_rule {
+          + action {
+              + type          = "AbortIncompleteMultipartUpload"
+                # (1 unchanged attribute hidden)
+            }
+          + condition {
+              + age                    = 1
+              + matches_prefix         = []
+              + matches_storage_class  = []
+              + matches_suffix         = []
+              + with_state             = (known after apply)
+                # (3 unchanged attributes hidden)
+            }
+        }
+
+      + soft_delete_policy (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+google_bigquery_dataset.nyc_taxi_trips_dataset: Creating...
+google_storage_bucket.nyc_taxi_trips_bucket: Creating...
+google_bigquery_dataset.nyc_taxi_trips_dataset: Creation complete after 2s [id=projects/avid-task-486715-p7/datasets/data_engineering_zoomcamp_2026_nyc_taxi_dataset]
+google_storage_bucket.nyc_taxi_trips_bucket: Creation complete after 3s [id=data_engineering_zoomcamp_2026_nyc_taxi_bucket]
 ```
 
 ```bash
-terraform destroy 
+terraform destroy
+google_storage_bucket.nyc_taxi_trips_bucket: Refreshing state... [id=data_engineering_zoomcamp_2026_nyc_taxi_bucket]
+google_bigquery_dataset.nyc_taxi_trips_dataset: Refreshing state... [id=projects/avid-task-486715-p7/datasets/data_engineering_zoomcamp_2026_nyc_taxi_dataset]
 
-#google_storage_bucket.nyc_taxi_trips_bucket: Destroying... [id=dtc-de-zoomcamp-2026-nyc-taxi-trips-bucket]
-#google_bigquery_dataset.nyc_taxi_trips_dataset: Destroying... [id=projects/dtc-de-zoomcamp-2026-nyc-taxi-trips/datasets/dtc-de-zoomcamp-2026-nyc-taxi-trips-dataset]
-#google_bigquery_dataset.nyc_taxi_trips_dataset: Destruction complete after 1s
-#google_storage_bucket.nyc_taxi_trips_bucket: Destruction complete after 2s
-#
-#Destroy complete! Resources: 2 destroyed.
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # google_bigquery_dataset.nyc_taxi_trips_dataset will be destroyed
+  - resource "google_bigquery_dataset" "nyc_taxi_trips_dataset" {
+      - creation_time                   = 1770576701051 -> null
+      - dataset_id                      = "data_engineering_zoomcamp_2026_nyc_taxi_dataset" -> null
+      - default_partition_expiration_ms = 0 -> null
+      - default_table_expiration_ms     = 0 -> null
+      - delete_contents_on_destroy      = false -> null
+      - effective_labels                = {
+          - "goog-terraform-provisioned" = "true"
+        } -> null
+      - etag                            = "9JhciSMzN2DrLcaovGJlZQ==" -> null
+      - id                              = "projects/avid-task-486715-p7/datasets/data_engineering_zoomcamp_2026_nyc_taxi_dataset" -> null
+      - is_case_insensitive             = false -> null
+      - labels                          = {} -> null
+      - last_modified_time              = 1770576701051 -> null
+      - location                        = "EU" -> null
+      - max_time_travel_hours           = "168" -> null
+      - project                         = "avid-task-486715-p7" -> null
+      - resource_tags                   = {} -> null
+      - self_link                       = "https://bigquery.googleapis.com/bigquery/v2/projects/avid-task-486715-p7/datasets/data_engineering_zoomcamp_2026_nyc_taxi_dataset" -> null
+      - terraform_labels                = {
+          - "goog-terraform-provisioned" = "true"
+        } -> null
+        # (4 unchanged attributes hidden)
+
+      - access {
+          - role           = "OWNER" -> null
+          - user_by_email  = "gigodezoomcamp@gmail.com" -> null
+            # (4 unchanged attributes hidden)
+        }
+      - access {
+          - role           = "OWNER" -> null
+          - special_group  = "projectOwners" -> null
+            # (4 unchanged attributes hidden)
+        }
+      - access {
+          - role           = "READER" -> null
+          - special_group  = "projectReaders" -> null
+            # (4 unchanged attributes hidden)
+        }
+      - access {
+          - role           = "WRITER" -> null
+          - special_group  = "projectWriters" -> null
+            # (4 unchanged attributes hidden)
+        }
+    }
+
+  # google_storage_bucket.nyc_taxi_trips_bucket will be destroyed
+  - resource "google_storage_bucket" "nyc_taxi_trips_bucket" {
+      - default_event_based_hold    = false -> null
+      - effective_labels            = {
+          - "goog-terraform-provisioned" = "true"
+        } -> null
+      - enable_object_retention     = false -> null
+      - force_destroy               = true -> null
+      - id                          = "data_engineering_zoomcamp_2026_nyc_taxi_bucket" -> null
+      - labels                      = {} -> null
+      - location                    = "EU" -> null
+      - name                        = "data_engineering_zoomcamp_2026_nyc_taxi_bucket" -> null
+      - project                     = "avid-task-486715-p7" -> null
+      - project_number              = 788482458581 -> null
+      - public_access_prevention    = "inherited" -> null
+      - requester_pays              = false -> null
+      - rpo                         = "DEFAULT" -> null
+      - self_link                   = "https://www.googleapis.com/storage/v1/b/data_engineering_zoomcamp_2026_nyc_taxi_bucket" -> null
+      - storage_class               = "STANDARD" -> null
+      - terraform_labels            = {
+          - "goog-terraform-provisioned" = "true"
+        } -> null
+      - time_created                = "2026-02-08T18:51:42.864Z" -> null
+      - uniform_bucket_level_access = false -> null
+      - updated                     = "2026-02-08T18:51:42.864Z" -> null
+      - url                         = "gs://data_engineering_zoomcamp_2026_nyc_taxi_bucket" -> null
+
+      - hierarchical_namespace {
+          - enabled = false -> null
+        }
+
+      - lifecycle_rule {
+          - action {
+              - type          = "AbortIncompleteMultipartUpload" -> null
+                # (1 unchanged attribute hidden)
+            }
+          - condition {
+              - age                                     = 1 -> null
+              - days_since_custom_time                  = 0 -> null
+              - days_since_noncurrent_time              = 0 -> null
+              - matches_prefix                          = [] -> null
+              - matches_storage_class                   = [] -> null
+              - matches_suffix                          = [] -> null
+              - num_newer_versions                      = 0 -> null
+              - send_age_if_zero                        = false -> null
+              - send_days_since_custom_time_if_zero     = false -> null
+              - send_days_since_noncurrent_time_if_zero = false -> null
+              - send_num_newer_versions_if_zero         = false -> null
+              - with_state                              = "ANY" -> null
+                # (3 unchanged attributes hidden)
+            }
+        }
+
+      - soft_delete_policy {
+          - effective_time             = "2026-02-08T18:51:42.864Z" -> null
+          - retention_duration_seconds = 604800 -> null
+        }
+    }
+
+Plan: 0 to add, 0 to change, 2 to destroy.
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+google_storage_bucket.nyc_taxi_trips_bucket: Destroying... [id=data_engineering_zoomcamp_2026_nyc_taxi_bucket]
+google_bigquery_dataset.nyc_taxi_trips_dataset: Destroying... [id=projects/avid-task-486715-p7/datasets/data_engineering_zoomcamp_2026_nyc_taxi_dataset]
+google_bigquery_dataset.nyc_taxi_trips_dataset: Destruction complete after 2s
+google_storage_bucket.nyc_taxi_trips_bucket: Destruction complete after 4s
+
+Destroy complete! Resources: 2 destroyed.                     
 ```
 
 
