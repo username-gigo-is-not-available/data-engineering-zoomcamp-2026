@@ -1,0 +1,36 @@
+id: data_engineering_zoomcamp_2026_nyc_taxi_file_size_pipeline
+namespace: company.nyc.taxi
+
+inputs:
+  - id: dataset_type
+    type: SELECT
+    values: [ "green", "yellow" ]
+    defaults: "green"
+  - id: year
+    type: SELECT
+    values: [ "2019", "2020", "2021" ]
+    defaults: "2019"
+  - id: month
+    type: SELECT
+    values: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ]
+    defaults: "01"
+
+
+tasks:
+  - id: download_file
+    type: io.kestra.plugin.core.http.Download
+    uri: "https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{ inputs.dataset_type }}/{{ inputs.dataset_type }}_tripdata_{{ inputs.year }}-{{ inputs.month }}.csv.gz"
+
+  - id: decompress_file
+    type: io.kestra.plugin.compress.FileDecompress
+    from: "{{ outputs.download_file.uri }}"
+    compression: GZIP
+
+  - id: get_uncompressed_size
+    type: io.kestra.plugin.core.storage.Size
+    uri: "{{ outputs.decompress_file.uri }}"
+
+  - id: log_size
+    type: io.kestra.plugin.core.log.Log
+    message: >
+      Uncompressed Size: {{ (outputs.get_uncompressed_size.size / 1024 / 1024)  }} MB

@@ -31,16 +31,35 @@ Complete the quiz shown below. It's a set of 6 multiple-choice questions to test
 - 364.7 MiB
 - 692.6 MiB
 
-```python
+```yaml
 
-def uncompressed_file_size(self, input_path: Path):
-    with gzip.open(input_path, 'rb') as f_in:
-        with io.BytesIO() as f_out:
-            shutil.copyfileobj(f_in, f_out)
-            size_bytes = f_out.tell()
+id: data_engineering_zoomcamp_2026_nyc_taxi_backfill_pipeline
+namespace: company.nyc.taxi
 
-    logging.info(f"Uncompressed size: {size_bytes / (1024 ** 2):.1f} MiB")
+inputs:
+  - id: dataset_type
+    type: SELECT
+    values: [ "green", "yellow" ]
+    defaults: "green"
+  - id: year
+    type: SELECT
+    values: [ "2019", "2020", "2021" ]
+    defaults: "2019"
 
+tasks:
+  - id: iterate_months
+    type: io.kestra.plugin.core.flow.ForEach
+    values: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ]
+    tasks:
+      - id: run_monthly_pipeline
+        type: io.kestra.plugin.core.flow.Subflow
+        flowId: data_engineering_zoomcamp_2026_nyc_taxi_monthly_pipeline
+        namespace: company.nyc.taxi
+        inputs:
+          dataset_type: "{{ inputs.dataset_type }}"
+          year: "{{ inputs.year }}"
+          month: "{{ taskrun.value }}"
+        wait: false
 ```
 
 2) What is the rendered value of the variable `file` when the inputs `taxi` is set to `green`, `year` is set to `2020`, and `month` is set to `04` during execution?
@@ -50,6 +69,9 @@ def uncompressed_file_size(self, input_path: Path):
 - `green_tripdata_2020.csv`
 
 ```yaml
+id: data_engineering_zoomcamp_2026_nyc_taxi_monthly_pipeline
+namespace: company.nyc.taxi
+
 inputs:
   - id: dataset_type
     type: SELECT
@@ -61,44 +83,48 @@ inputs:
     defaults: "2019"
   - id: month
     type: SELECT
-    values: [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" ]
-    defaults: "1"
-  - id: chunk_size
-    type: INT
-    defaults: 100000
+    values: [ "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12" ]
+    defaults: "01"
 
 
 tasks:
-  - id: init
-    type: io.kestra.plugin.scripts.shell.Commands
-    taskRunner:
-      type: io.kestra.plugin.scripts.runner.docker.Docker
-      networkMode: "02-workflow-orchestration_default"
-    containerImage: "{{ envs.init_stage_image_name }}"
-    commands:
-      - python -m init.main
+  - id: download_file
+    type: io.kestra.plugin.core.http.Download
+    uri: "https://d37ci6vzurychx.cloudfront.net/trip-data/{{ inputs.dataset_type }}_tripdata_{{ inputs.year }}-{{ inputs.month }}.parquet"
+    timeout: PT5M
 
-  - id: silver
-    type: io.kestra.plugin.scripts.shell.Commands
-    taskRunner:
-      type: io.kestra.plugin.scripts.runner.docker.Docker
-      networkMode: "02-workflow-orchestration_default"
-    containerImage: "{{ envs.silver_stage_image_name }}"
-    commands:
-      - python -m silver.main --dataset_type {{ inputs.dataset_type }} --year {{ inputs.year }} --month {{ inputs.month }} --chunk_size {{ inputs.chunk_size }}
-    outputFiles:
-      - "{{ envs.nyc_taxi_directory_path }}/*.parquet"
+  - id: delete_existing_file
+    type: io.kestra.plugin.gcp.gcs.Delete
+    uri: "gs://{{ envs.gcp_bucket_name }}/{{ inputs.dataset_type }}/{{ inputs.dataset_type }}_tripdata_{{ inputs.year }}-{{ inputs.month }}.parquet"
+    errorOnMissing: false
 
-  - id: gold
-    type: io.kestra.plugin.scripts.shell.Commands
-    taskRunner:
-      type: io.kestra.plugin.scripts.runner.docker.Docker
-      networkMode: "02-workflow-orchestration_default"
-    containerImage: "{{ envs.gold_stage_image_name }}"
-    inputFiles:
-      data.parquet: "{{ outputs.silver.outputFiles.values() | first }}"
-    commands:
-      - python -m gold.main --dataset_type {{ inputs.dataset_type }} --year {{ inputs.year }} --month {{ inputs.month }} --chunk_size {{ inputs.chunk_size }} --file_path data.parquet
+  - id: upload_file_to_bucket
+    type: "io.kestra.plugin.gcp.gcs.Upload"
+    from: "{{ outputs.download_file.uri }}"
+    to: "gs://{{ envs.gcp_bucket_name }}/{{ inputs.dataset_type }}/{{ inputs.dataset_type }}_tripdata_{{ inputs.year }}-{{ inputs.month }}.parquet"
+    projectId: "{{ envs.gcp_project_id }}"
+
+  - id: create_external_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: "{{ render(read('steps/silver/create_external_table.sql')) }}"
+
+  - id: create_native_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: "{{ render(read('steps/init/create_table_' ~ inputs.dataset_type ~ '_if_not_exists.sql')) }}"
+
+  - id: insert_into_native_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: "{{ render(read('steps/gold/delete_and_insert_into_' ~ inputs.dataset_type ~ '.sql')) }}"
+
+  - id: drop_external_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: "{{ render(read('steps/teardown/drop_external_table.sql')) }}"
+
+triggers:
+  - id: daily
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "@daily"
+    timezone: America/New_York
 
 ```
 
@@ -109,8 +135,8 @@ tasks:
 - 29,430,127
 
 ```sql 
-select count(*) as number_of_rows
-from yellow
+select count(*)
+from data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_green
 where extract(year from pick_up_datetime) = 2020
 ```
 
@@ -121,8 +147,8 @@ where extract(year from pick_up_datetime) = 2020
 - 1,342,034
 
 ```sql
-select count(*) as number_of_rows
-from green
+select count(*)
+from data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow
 where extract(year from pick_up_datetime) = 2020
 ```
 
@@ -133,10 +159,10 @@ where extract(year from pick_up_datetime) = 2020
 - 2,561,031
 
 ```sql 
-select count(*) as number_of_rows
-from yellow
-where extract(year from pick_up_datetime) = 2021 
-      and extract(month from pick_up_datetime) = 3
+select count(*)
+from data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow
+where extract(year from pick_up_datetime) = 2021
+and extract(month from pick_up_datetime) = 3
 ```
 
 6) How would you configure the timezone to New York in a Schedule trigger?

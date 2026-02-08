@@ -14,24 +14,26 @@ services:
       KESTRA_DB_USER: ${KESTRA_DB_USER}
       KESTRA_DB_PASSWORD: ${KESTRA_DB_PASSWORD}
       KESTRA_DB_NAME: ${KESTRA_DB_NAME}
+      GOOGLE_APPLICATION_CREDENTIALS: /app/secrets/gcp_kestra_credentials.json
     volumes:
       - ./data:/app/data
       - ./kestra-config.yml:/app/confs/kestra-config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
+      -  /var/run/docker.sock:/var/run/docker.sock
+      - ./secrets/gcp_kestra_credentials.json:/app/secrets/gcp_kestra_credentials.json
     depends_on:
       - postgres
 
 
   postgres:
-    container_name: ${NYC_TAXI_DB_HOST}
+    container_name: ${KESTRA_DB_HOST}
     image: postgres:17-alpine
     env_file: .env
     environment:
-      POSTGRES_USER: ${NYC_TAXI_DB_USER}
-      POSTGRES_PASSWORD: ${NYC_TAXI_DB_PASSWORD}
-      POSTGRES_DB: ${NYC_TAXI_DB_NAME}
+      POSTGRES_USER: ${KESTRA_DB_USER}
+      POSTGRES_PASSWORD: ${KESTRA_DB_PASSWORD}
+      POSTGRES_DB: ${KESTRA_DB_NAME}
     ports:
-      - "${NYC_TAXI_DB_PORT}:5432"
+      - "${KESTRA_DB_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d

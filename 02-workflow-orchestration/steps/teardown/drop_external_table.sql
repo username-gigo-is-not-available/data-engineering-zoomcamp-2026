@@ -1,0 +1,1 @@
+DROP EXTERNAL TABLE IF EXISTS `{{ envs.gcp_project_id }}.{{ envs.gcp_dataset_name }}.ext_{{ inputs.dataset_type }}_{{ inputs.year }}_{{ inputs.month }}`;
