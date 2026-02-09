@@ -42,6 +42,35 @@ Create an external table using the Yellow Taxi Trip Records.
 
 Create a (regular/materialized) table in BQ using the Yellow Taxi Trip Records (do not partition or cluster this table). 
 
+```bigquery
+CREATE OR REPLACE EXTERNAL TABLE `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.external_yellow`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://data_engineering_zoomcamp_2026_nyc_taxi_bucket/yellow_tripdata_2024-*.parquet']
+);
+
+CREATE TABLE IF NOT EXISTS `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow`
+(
+    vendor_id INT64,
+    pick_up_datetime DATETIME,
+    drop_off_datetime DATETIME,
+    store_and_forward_flag STRING,
+    rate_code_id INT64,
+    pick_up_location_id INT64,
+    drop_off_location_id INT64,
+    passenger_count INT64,
+    trip_distance FLOAT64,
+    fare_amount FLOAT64,
+    extra FLOAT64,
+    mta_tax FLOAT64,
+    tip_amount FLOAT64,
+    tolls_amount FLOAT64,
+    improvement_surcharge FLOAT64,
+    total_amount FLOAT64,
+    payment_type INT64,
+    congestion_surcharge FLOAT64
+);
+```
 
 
 ## Question 1. Counting records
@@ -53,8 +82,8 @@ What is count of records for the 2024 Yellow Taxi Data?
 - 85,431,289
 
 ```bigquery
-SELECT COUNT(*)
-FROM `avid-task-486715-p7.nyc_taxi_dataset.external_yellow`
+SELECT COUNT(*) 
+FROM `data_engineering_zoomcamp_2026_nyc_taxi_dataset.external_yellow`
 --20332093
 ```
 
@@ -71,11 +100,11 @@ What is the **estimated amount** of data that will be read when this query is ex
 - 0 MB for the External Table and 0MB for the Materialized Table
 
 ```bigquery
-SELECT COUNT(DISTINCT(PULocationID)) FROM `avid-task-486715-p7.nyc_taxi_dataset.external_yellow`;
+SELECT COUNT(DISTINCT(PULocationID)) FROM `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.external_yellow`;
 --0B
 
-SELECT COUNT(DISTINCT(PULocationID)) FROM `avid-task-486715-p7.nyc_taxi_dataset.native_yellow`;
---155.12MB 
+SELECT COUNT(DISTINCT(pick_up_location_id)) FROM `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow`;
+--155.12MB
 ```
 
 ## Question 3. Understanding columnar storage
@@ -100,7 +129,7 @@ How many records have a fare_amount of 0?
 
 ```bigquery
 SELECT COUNT(*)
-FROM `avid-task-486715-p7.nyc_taxi_dataset.native_yellow`
+FROM `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow`
 WHERE fare_amount = 0
 --8333
 ```
@@ -115,12 +144,12 @@ What is the best strategy to make an optimized table in Big Query if your query 
 - Partition by tpep_dropoff_datetime and Partition by VendorID
 
 ```bigquery
-CREATE OR REPLACE TABLE `avid-task-486715-p7.nyc_taxi_dataset.native_yellow_partitioned_clustered`
-PARTITION BY DATE(tpep_dropoff_datetime)
-CLUSTER BY VendorID
+CREATE OR REPLACE TABLE `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow_partitioned_clustered`
+PARTITION BY DATE(drop_off_datetime)
+CLUSTER BY vendor_id
 AS
 SELECT *
-FROM `avid-task-486715-p7.nyc_taxi_dataset.native_yellow`;
+FROM `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow`;
 ```
 
 ## Question 6. Partition benefits
@@ -142,11 +171,11 @@ Choose the answer which most closely matches.
 
 
 ```bigquery
-SELECT COUNT(DISTINCT VendorID) FROM `avid-task-486715-p7.nyc_taxi_dataset.native_yellow`
-WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
+SELECT COUNT(DISTINCT vendor_id) FROM `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow`
+WHERE drop_off_datetime BETWEEN '2024-03-01' AND '2024-03-15';
 --310.24MB
-SELECT COUNT(DISTINCT VendorID) FROM `avid-task-486715-p7.nyc_taxi_dataset.native_yellow_partitioned_clustered`
-WHERE tpep_dropoff_datetime BETWEEN '2024-03-01' AND '2024-03-15';
+SELECT COUNT(DISTINCT vendor_id) FROM `avid-task-486715-p7.data_engineering_zoomcamp_2026_nyc_taxi_dataset.native_yellow_partitioned_clustered`
+WHERE drop_off_datetime BETWEEN '2024-03-01' AND '2024-03-15';
 --26.84MB
 ```
 
