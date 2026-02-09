@@ -26,6 +26,7 @@ resource "google_storage_bucket" "nyc_taxi_trips_bucket" {
 resource "google_bigquery_dataset" "nyc_taxi_trips_dataset" {
   dataset_id = var.bq_dataset_name
   location   = var.location
+  delete_contents_on_destroy = true
 }
 
 resource "google_service_account" "kestra_account" {
