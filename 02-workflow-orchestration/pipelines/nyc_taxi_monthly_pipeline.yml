@@ -4,7 +4,7 @@ namespace: company.nyc.taxi
 inputs:
   - id: dataset_type
     type: SELECT
-    values: [ "green", "yellow" ]
+    values: [ "green", "yellow" , "fhv"]
     defaults: "green"
   - id: year
     type: SELECT
