@@ -1,0 +1,3 @@
+project_id         = "dtc-de-zoomcamp-2026-nyc-taxi-trips"
+bq_dataset_name = "dtc-de-zoomcamp-2026-nyc-taxi-trips-dataset"
+gcs_bucket_name = "dtc-de-zoomcamp-2026-nyc-taxi-trips-bucket"
