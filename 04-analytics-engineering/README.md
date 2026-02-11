@@ -115,7 +115,7 @@ Using the `fct_monthly_zone_revenue` table, find the pickup zone with the **high
 
 Which zone had the highest revenue?
 
-**- East Harlem North**
+- **East Harlem North**
 - Morningside Heights
 - East Harlem South
 - Washington Heights South
