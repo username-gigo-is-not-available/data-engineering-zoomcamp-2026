@@ -28,3 +28,5 @@ data/*
 *.gz
 *.log
 **/secrets/
+02-workflow-orchestration/infrastructure/data
+05-data-platforms/.bruin.yml
