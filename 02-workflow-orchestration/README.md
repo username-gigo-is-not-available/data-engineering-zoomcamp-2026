@@ -106,19 +106,19 @@ tasks:
 
   - id: create_external_table
     type: io.kestra.plugin.gcp.bigquery.Query
-    sql: "{{ render(read('steps/silver/create_external_table.sql')) }}"
+    sql: "{{ render(read('assets/silver/create_external_table.sql')) }}"
 
   - id: create_native_table
     type: io.kestra.plugin.gcp.bigquery.Query
-    sql: "{{ render(read('steps/init/create_table_' ~ inputs.dataset_type ~ '_if_not_exists.sql')) }}"
+    sql: "{{ render(read('assets/init/create_table_' ~ inputs.dataset_type ~ '_if_not_exists.sql')) }}"
 
   - id: insert_into_native_table
     type: io.kestra.plugin.gcp.bigquery.Query
-    sql: "{{ render(read('steps/gold/delete_and_insert_into_' ~ inputs.dataset_type ~ '.sql')) }}"
+    sql: "{{ render(read('assets/gold/delete_and_insert_into_' ~ inputs.dataset_type ~ '.sql')) }}"
 
   - id: drop_external_table
     type: io.kestra.plugin.gcp.bigquery.Query
-    sql: "{{ render(read('steps/teardown/drop_external_table.sql')) }}"
+    sql: "{{ render(read('assets/teardown/drop_external_table.sql')) }}"
 
 triggers:
   - id: daily
