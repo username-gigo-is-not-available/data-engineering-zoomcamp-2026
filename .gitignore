@@ -30,3 +30,6 @@ data/*
 **/secrets/
 02-workflow-orchestration/infrastructure/data
 05-data-platforms/.bruin.yml
+logs/runs
+logs/*.log
+.bruin.yml
