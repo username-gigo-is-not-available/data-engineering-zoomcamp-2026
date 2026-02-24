@@ -1,0 +1,17 @@
+name: data_engineering_zoomcamp_2026_nyc_taxi_monthly_pipeline
+
+schedule: "daily"
+
+# Format: YYYY-MM-DD
+start_date: "2019-12-01"
+
+default_connections:
+  sqlite: data-engineering-zoomcamp-2026-nyc-taxi
+
+variables:
+  datasets:
+    type: list
+    items:
+      type: string
+    default: ["green", "yellow"]
+
