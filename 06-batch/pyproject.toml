@@ -1,0 +1,15 @@
+[project]
+name = "06-batch"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "grpcio>=1.78.1",
+    "pandas>=3.0.1",
+    "pyarrow>=23.0.1",
+    "pyspark[connect,pandas,sql]>=4.1.1",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+]
