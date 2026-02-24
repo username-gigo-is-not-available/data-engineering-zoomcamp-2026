@@ -33,3 +33,4 @@ data/*
 logs/runs
 logs/*.log
 .bruin.yml
+06-batch/data
